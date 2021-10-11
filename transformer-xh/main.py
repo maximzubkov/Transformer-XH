@@ -21,6 +21,7 @@ from pytorch_transformers.file_utils import PYTORCH_PRETRAINED_BERT_CACHE
 import torch.nn.functional as F
 from Trainer import train_hotpot, train_fever
 from Evaluator import evaluation_hotpot, evaluation_fever
+from Interpreter import interpret_hotpot, interpret_fever
 
 
 
@@ -68,6 +69,10 @@ def parse_args():
                     default=False,
                     action='store_true',
                     help="Whether on test mode")
+    parser.add_argument('--interpretation',
+                        default=False,
+                        action='store_true',
+                        help="Whether to run interpretation mode")
 
 
     return parser.parse_args()
@@ -146,6 +151,15 @@ if __name__ == '__main__':
             json.dump(final_pred, open("out_dev.json", "w"))
         elif config['task'] == 'fever':
             auc, pred_dict = evaluation_fever(model, eval_file, config, args)
+    elif args.interpretation:
+        model.load(os.path.join(base_dir, config['name'], "saved_models/model_finetuned_epoch_{}.pt".format(0)))
+        model.eval()
+        eval_file = config["system"]['test_data']
+
+        if config['task'] == 'hotpotqa':
+            interpret_hotpot(model, config, args)
+        elif config['task'] == 'fever':
+            interpret_fever(model, config, args)
     
     ### Model Training
     else:
