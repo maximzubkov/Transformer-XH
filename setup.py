@@ -30,7 +30,7 @@ setup(name='transformer-xh',
           'torchsummary',
           'dgl',
           'tqdm',
-          'pytorch_transformers',
+          'pytorch_transformers==1.0.0',
           'rapidfuzz'
       ], 
       )
