@@ -109,8 +109,8 @@ class TransformerXHEncoder(BertEncoder):
     
     def build_model(self):
         self.graph_layers = nn.ModuleList()
-        # input to hidden
-        device = torch.device("cuda")
+
+        device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
         i2h = self.build_input_layer().to(device)
         self.graph_layers.append(i2h)
